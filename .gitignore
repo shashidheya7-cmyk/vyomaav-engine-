@@ -1,4 +1,36 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+
+# Model weights and checkpoints
+models/
+weights/
+checkpoints/
+
+# Large local datasets / generated media
 workspace/
 *.mp4
+*.mov
+*.avi
 test_multiview_set/
 test_image.png
+
+# Generated caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# OS / IDE
+.vscode/
+.DS_Store
+Thumbs.db
