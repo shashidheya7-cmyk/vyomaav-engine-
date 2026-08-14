@@ -34,3 +34,4 @@ test_image.png
 .vscode/
 .DS_Store
 Thumbs.db
+*.egg-info/

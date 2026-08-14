@@ -1,4 +1,4 @@
-﻿"""Depth Anything V2 adapter for dense monocular metric and relative depth estimation."""
+"""Depth Anything V2 adapter for dense monocular depth estimation."""
 
 from __future__ import annotations
 
@@ -32,8 +32,7 @@ DEPTH_ANYTHING_V2_SPEC = ModelSpec(
         PrecisionType.FP32,
     ],
     description=(
-        "Zero-shot foundation model for high-resolution "
-        "dense depth estimation."
+        "Zero-shot foundation model for high-resolution dense depth estimation."
     ),
 )
 
@@ -43,54 +42,43 @@ DEPTH_ANYTHING_V2_SPEC = ModelSpec(
     spec=DEPTH_ANYTHING_V2_SPEC,
 )
 class DepthAnythingV2Adapter(BaseVisionAdapter):
-    """Adapter executing Depth Anything V2 with strict device validation."""
+    """Depth Anything V2 adapter with explicit runtime state and dense output handoff."""
 
     def __init__(
         self,
         config: Optional[Dict[str, Any]] = None,
     ) -> None:
         super().__init__(DEPTH_ANYTHING_V2_SPEC, config)
+
         self.model = None
         self.processor = None
+
+        # Concrete dense inference result kept in memory for the DAG
+        # handoff to point-map/backprojection stages.
+        self.last_depth_array: Optional[np.ndarray] = None
 
     def initialize(
         self,
         device: str = "cuda",
         precision: str = "fp16",
     ) -> None:
-        """
-        Load Depth Anything V2.
-
-        Device contract:
-        - cuda -> CUDA must actually be available.
-        - cpu  -> explicitly load on CPU.
-        - anything else -> ModelUnavailableError.
-
-        Importantly, CUDA availability is checked BEFORE attempting
-        Hugging Face model downloads. This keeps unavailable-GPU tests
-        deterministic and prevents unnecessary weight downloads.
-        """
+        """Load Depth Anything V2 on the explicitly requested device."""
 
         device = str(device).lower().strip()
         precision = str(precision).lower().strip()
 
         if device not in {"cuda", "cpu"}:
             raise ModelUnavailableError(
-                f"Unsupported device '{device}'. "
-                "Expected 'cuda' or 'cpu'."
+                f"Unsupported device '{device}'. Expected 'cuda' or 'cpu'."
             )
 
         try:
             import torch
         except ImportError as exc:
             raise ModelUnavailableError(
-                "DepthAnythingV2 requires 'torch'. "
-                f"Missing dependency: {exc}"
+                f"DepthAnythingV2 requires torch: {exc}"
             ) from exc
 
-        # CRITICAL:
-        # If CUDA was explicitly requested, never silently fall back
-        # to CPU. The caller asked for a GPU-resident model.
         if device == "cuda" and not torch.cuda.is_available():
             raise ModelUnavailableError(
                 "DepthAnythingV2 requested CUDA, but CUDA is not "
@@ -104,8 +92,7 @@ class DepthAnythingV2Adapter(BaseVisionAdapter):
             )
         except ImportError as exc:
             raise ModelUnavailableError(
-                "DepthAnythingV2 requires 'transformers'. "
-                f"Missing dependency: {exc}"
+                f"DepthAnythingV2 requires transformers: {exc}"
             ) from exc
 
         model_id = self.config.get(
@@ -134,32 +121,26 @@ class DepthAnythingV2Adapter(BaseVisionAdapter):
                         f"Unsupported precision '{precision}'. "
                         "Expected 'fp16' or 'fp32'."
                     )
-
             else:
-                # Explicit CPU mode.
                 self.model = self.model.to("cpu")
 
-                if precision == "fp32":
-                    self.model = self.model.float()
-                elif precision == "fp16":
-                    # CPU FP16 inference is generally undesirable.
-                    # Keep CPU execution in FP32 for reliability.
-                    self.model = self.model.float()
-                else:
-                    raise ModelUnavailableError(
-                        f"Unsupported precision '{precision}'. "
-                        "Expected 'fp16' or 'fp32'."
-                    )
+                # Keep CPU inference in FP32 for reliability.
+                self.model = self.model.float()
 
             self.model.eval()
+            self.last_depth_array = None
             self.runtime_state = "loaded_resident"
 
         except ModelUnavailableError:
+            self.model = None
+            self.processor = None
+            self.runtime_state = "unavailable"
             raise
 
         except Exception as exc:
             self.model = None
             self.processor = None
+            self.last_depth_array = None
             self.runtime_state = "unavailable"
 
             raise ModelUnavailableError(
@@ -172,7 +153,7 @@ class DepthAnythingV2Adapter(BaseVisionAdapter):
         image_rgb: Image.Image,
         observation: Optional[Observation] = None,
     ) -> DepthMap:
-        """Run dense depth inference on an RGB image."""
+        """Run dense inference and retain the full-resolution depth array."""
 
         if self.model is None or self.processor is None:
             raise ModelUnavailableError(
@@ -192,7 +173,7 @@ class DepthAnythingV2Adapter(BaseVisionAdapter):
                 "DepthAnythingV2 expects a PIL.Image.Image input."
             )
 
-        w, h = image_rgb.size
+        width, height = image_rgb.size
 
         try:
             inputs = self.processor(
@@ -211,16 +192,16 @@ class DepthAnythingV2Adapter(BaseVisionAdapter):
                 outputs = self.model(**inputs)
                 predicted_depth = outputs.predicted_depth
 
-            # Interpolate prediction back to original resolution.
             prediction = (
                 torch.nn.functional.interpolate(
                     predicted_depth.unsqueeze(1),
-                    size=(h, w),
+                    size=(height, width),
                     mode="bicubic",
                     align_corners=False,
                 )
                 .squeeze()
                 .detach()
+                .float()
                 .cpu()
                 .numpy()
             )
@@ -230,10 +211,10 @@ class DepthAnythingV2Adapter(BaseVisionAdapter):
                 dtype=np.float32,
             )
 
-            if prediction.ndim != 2:
+            if prediction.shape != (height, width):
                 raise VisionError(
-                    "DepthAnythingV2 produced an invalid depth tensor "
-                    f"with shape {prediction.shape}."
+                    "DepthAnythingV2 produced an unexpected depth shape: "
+                    f"{prediction.shape}, expected {(height, width)}."
                 )
 
             if not np.all(np.isfinite(prediction)):
@@ -241,18 +222,20 @@ class DepthAnythingV2Adapter(BaseVisionAdapter):
                     "DepthAnythingV2 produced non-finite depth values."
                 )
 
-            min_d = float(np.min(prediction))
-            max_d = float(np.max(prediction))
+            self.last_depth_array = prediction.copy()
 
-            depth_artifact = DepthMap(
+            min_depth = float(np.min(prediction))
+            max_depth = float(np.max(prediction))
+
+            return DepthMap(
                 name=(
                     f"Depth_"
                     f"{observation.frame_id if observation else 'image'}"
                 ),
-                width=w,
-                height=h,
-                min_depth=min_d,
-                max_depth=max_d,
+                width=width,
+                height=height,
+                min_depth=min_depth,
+                max_depth=max_depth,
                 is_metric=False,
                 camera_id=(
                     observation.camera.artifact_id
@@ -271,12 +254,11 @@ class DepthAnythingV2Adapter(BaseVisionAdapter):
                 ),
             )
 
-            return depth_artifact
-
         except (ModelUnavailableError, VisionError):
             raise
 
         except Exception as exc:
+            self.last_depth_array = None
             raise VisionError(
                 f"DepthAnythingV2 inference failed: {exc}"
             ) from exc
