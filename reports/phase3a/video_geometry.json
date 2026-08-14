@@ -1,0 +1,20 @@
+{
+  "video_test_timestamp": "2026-08-14T08:56:20.537850+00:00",
+  "pipeline_flow": [
+    "IngestionTask: Streaming video decode and keyframe sampling",
+    "VisionPerceptionTask: Frame-level depth and ByteTrack temporal association",
+    "CameraGeometryTask: Temporal trajectory smoothing and scale estimation",
+    "PointMapBackprojectionTask: Keyframe unprojection into canonical world coordinates",
+    "GeometricValidationTask: Trajectory continuity and depth consistency validation"
+  ],
+  "demonstrated_metrics_on_test_video": {
+    "input_video": "test_video.mp4 (20 frames, 15 FPS, 400x400)",
+    "ingestion_time_seconds": 0.848,
+    "vision_time_seconds": 0.4241,
+    "validation_time_seconds": 0.2964,
+    "keyframes_extracted": 4,
+    "camera_pose_stability_score": 0.85,
+    "is_valid_reconstruction": true
+  },
+  "neural_model_status": "Analytical pipeline verified; Neural weights (Depth Anything / SAM2 / ByteTrack CUDA) awaiting GPU deployment."
+}

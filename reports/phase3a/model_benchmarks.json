@@ -1,0 +1,97 @@
+{
+  "benchmark_timestamp": "2026-08-14T08:56:11.937021+00:00",
+  "execution_environment": "Sandboxed Container (No CUDA GPU Passthrough)",
+  "target_hardware": "NVIDIA RTX PRO 6000 Blackwell (~91 GB VRAM)",
+  "models": {
+    "DepthAnythingV2": {
+      "model_name": "DepthAnythingV2",
+      "version": "2.0.0",
+      "capability": "monocular_depth",
+      "estimated_vram_gb": 4.0,
+      "supported_precisions": [
+        "fp16",
+        "fp32"
+      ],
+      "status": "UNAVAILABLE",
+      "error_type": "ModelUnavailableError",
+      "error_message": "DepthAnythingV2 requires 'torch' and 'transformers'. Missing dependency: No module named 'torch'",
+      "required_fix": "Install PyTorch with CUDA 12.8+ support (torch>=2.4.0) and transformers>=4.45.",
+      "benchmark_metrics": null
+    },
+    "SAM2": {
+      "model_name": "SAM2",
+      "version": "2.0.0",
+      "capability": "panoptic_segmentation",
+      "estimated_vram_gb": 6.0,
+      "supported_precisions": [
+        "fp16",
+        "bf16"
+      ],
+      "status": "UNAVAILABLE",
+      "error_type": "ModelUnavailableError",
+      "error_message": "SAM2 requires 'sam2' and 'torch' packages. Missing dependency: No module named 'torch'",
+      "required_fix": "Install PyTorch with CUDA 12.8+ support (torch>=2.4.0) and transformers>=4.45.",
+      "benchmark_metrics": null
+    },
+    "VGGT": {
+      "model_name": "VGGT",
+      "version": "1.0.0",
+      "capability": "sfm_calibration",
+      "estimated_vram_gb": 12.0,
+      "supported_precisions": [
+        "fp16",
+        "bf16"
+      ],
+      "status": "UNAVAILABLE",
+      "error_type": "ModelUnavailableError",
+      "error_message": "VGGT requires PyTorch runtime: No module named 'torch'",
+      "required_fix": "Install PyTorch with CUDA 12.8+ support (torch>=2.4.0) and transformers>=4.45.",
+      "benchmark_metrics": null
+    },
+    "DUSt3R": {
+      "model_name": "DUSt3R",
+      "version": "1.0.0",
+      "capability": "dense_correspondence",
+      "estimated_vram_gb": 8.0,
+      "supported_precisions": [
+        "fp16",
+        "fp32"
+      ],
+      "status": "UNAVAILABLE",
+      "error_type": "ModelUnavailableError",
+      "error_message": "DUSt3R requires 'dust3r' package: No module named 'torch'",
+      "required_fix": "Install PyTorch with CUDA 12.8+ support (torch>=2.4.0) and transformers>=4.45.",
+      "benchmark_metrics": null
+    },
+    "MASt3R": {
+      "model_name": "MASt3R",
+      "version": "1.0.0",
+      "capability": "dense_correspondence",
+      "estimated_vram_gb": 10.0,
+      "supported_precisions": [
+        "fp16",
+        "bf16"
+      ],
+      "status": "UNAVAILABLE",
+      "error_type": "ModelUnavailableError",
+      "error_message": "MASt3R requires 'mast3r' package: No module named 'torch'",
+      "required_fix": "Install PyTorch with CUDA 12.8+ support (torch>=2.4.0) and transformers>=4.45.",
+      "benchmark_metrics": null
+    },
+    "COLMAP": {
+      "model_name": "COLMAP",
+      "version": "3.9.0",
+      "capability": "sfm_calibration",
+      "estimated_vram_gb": 4.0,
+      "supported_precisions": [
+        "fp16",
+        "fp32"
+      ],
+      "status": "UNAVAILABLE",
+      "error_type": "ModelUnavailableError",
+      "error_message": "COLMAP binary executable not found on system PATH. Install COLMAP.",
+      "required_fix": "Install COLMAP binary executable via apt-get or build from source with CUDA support.",
+      "benchmark_metrics": null
+    }
+  }
+}

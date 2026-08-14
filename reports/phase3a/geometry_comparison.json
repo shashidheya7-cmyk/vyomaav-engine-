@@ -1,0 +1,47 @@
+{
+  "comparison_timestamp": "2026-08-14T08:56:20.388755+00:00",
+  "models_analyzed": [
+    "VGGT",
+    "DUSt3R",
+    "MASt3R",
+    "COLMAP"
+  ],
+  "comparison_protocol": {
+    "camera_agreement_metric": "Relative rotation angle error (degrees) and translation vector angular error",
+    "point_cloud_alignment": "Iterative Closest Point (ICP) fitness score and Chamfer distance",
+    "reprojection_error_metric": "Mean and Root-Mean-Square Error (RMSE) in pixels over verified SIFT/dense inliers",
+    "scale_relationship": "Relative uncalibrated baseline (DUSt3R/MASt3R/COLMAP) vs metric prior (RGB-D)",
+    "disagreement_resolution": "Observation confidence weighting: MASt3R/COLMAP high-confidence inliers strictly anchor geometry; generative priors are rejected if residual > 3.0px"
+  },
+  "model_roles_and_characteristics": {
+    "VGGT": {
+      "role": "Rapid joint multi-view pose & point map prediction",
+      "output_type": "Dense Point Map (N, H, W, 3) + Camera Poses",
+      "scale": "Relative / Up-to-scale",
+      "strengths": "Single-pass feedforward prediction, high speed",
+      "weaknesses": "Smoothing of thin structural features"
+    },
+    "DUSt3R": {
+      "role": "Dense unconstrained stereo geometry & pairwise alignment",
+      "output_type": "Pairwise 3D Pointmaps + Confidence Maps",
+      "scale": "Relative per pair",
+      "strengths": "No camera calibration required upfront, dense coverage",
+      "weaknesses": "Pairwise drift on long loops without global alignment"
+    },
+    "MASt3R": {
+      "role": "Pixel-accurate 3D matching & geometry verification",
+      "output_type": "3D Feature Descriptors + Dense Matches + Metric Confidence",
+      "scale": "Relative per pair",
+      "strengths": "Sub-pixel correspondence precision, high robustness on low-texture surfaces",
+      "weaknesses": "Higher computational footprint per image pair"
+    },
+    "COLMAP": {
+      "role": "Classical sparse Structure from Motion & Bundle Adjustment",
+      "output_type": "Calibrated Pinhole Cameras + Sparse Triangulated Points (V, 3)",
+      "scale": "Relative (Metric if scaled by known baseline)",
+      "strengths": "Strict mathematical consistency, lowest reprojection error (<0.8px)",
+      "weaknesses": "Fails on untextured/specular surfaces, non-feedforward optimization"
+    }
+  },
+  "activation_status": "AWAITING_GPU_HOST_DEPLOYMENT"
+}

@@ -1,0 +1,21 @@
+{
+  "audit_timestamp": "2026-08-14T08:55:58.443694+00:00",
+  "python_version": "3.11.2 (main, May 12 2026, 05:17:27) [GCC 12.2.0]",
+  "platform": "Linux-4.19.0-gvisor-x86_64-with-glibc2.36",
+  "cuda_available": false,
+  "nvidia_gpu_model": null,
+  "cuda_driver_version": null,
+  "cuda_runtime": null,
+  "pytorch_version": null,
+  "torch_version_cuda": null,
+  "compute_capability": null,
+  "total_vram_bytes": 0,
+  "total_vram_gb": 0.0,
+  "free_vram_bytes": 0,
+  "free_vram_gb": 0.0,
+  "cudnn_version": null,
+  "cuda_matrix_mult_test": "FAILED: ModuleNotFoundError: No module named 'torch'",
+  "status": "FAIL_CUDA_UNAVAILABLE",
+  "failure_reason": "Current execution host is a sandboxed container without NVIDIA GPU passthrough, CUDA runtime, or PyTorch.",
+  "target_hardware_intended": "NVIDIA RTX PRO 6000 Blackwell (~91 GB VRAM)"
+}

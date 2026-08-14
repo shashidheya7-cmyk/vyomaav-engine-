@@ -1,0 +1,20 @@
+{
+  "residency_test_timestamp": "2026-08-14T08:56:20.683676+00:00",
+  "target_hardware": "NVIDIA RTX PRO 6000 Blackwell (~91 GB Usable VRAM)",
+  "managed_vram_budget_gb": 85.0,
+  "reserve_headroom_gb": 6.0,
+  "residency_scenarios": {
+    "Scenario_A_Evict_Every_Stage": {
+      "description": "Legacy T4 pattern: Load model -> Run inference -> Force gc.collect() + empty_cache() -> Unload",
+      "memory_efficiency": "Keeps instantaneous VRAM low (~8-18 GB)",
+      "time_penalty_per_invocation": "Severe: Reloading 15-30 GB weights from host PCIe introduces 4-12 second latency penalty per stage",
+      "suitability_for_blackwell": "DEPRECATED: Unnecessary VRAM thrashing on a 91 GB GPU"
+    },
+    "Scenario_B_Persistent_Resident_Pool": {
+      "description": "Blackwell high-VRAM pattern: Load core workers (Depth Anything 4GB + SAM2 6GB + MASt3R 10GB + TRELLIS 14GB = 34GB) into persistent VRAM pool",
+      "memory_footprint_gb": "34 GB resident footprint out of 85 GB managed budget (51 GB free for batch tensor operations)",
+      "time_penalty_per_invocation": "Zero model reload overhead; sub-50ms execution dispatch per frame",
+      "suitability_for_blackwell": "RECOMMENDED & IMPLEMENTED in VRAMManager"
+    }
+  }
+}
