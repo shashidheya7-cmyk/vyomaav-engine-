@@ -1,0 +1,87 @@
+"""Core framework primitives, contracts, types, and exceptions."""
+
+from .types import (
+    ArtifactType,
+    ModalityType,
+    ConfidenceLevel,
+    TaskState,
+    DeviceType,
+    PrecisionType,
+    ModelRuntimeState,
+    ModelCapability,
+    EntityType,
+    SpatialRelation,
+)
+from .exceptions import (
+    VyomaaError,
+    ConfigurationError,
+    SchemaValidationError,
+    ArtifactStoreError,
+    SceneGraphError,
+    GeometryError,
+    HardwareError,
+    RegistryError,
+    PipelineExecutionError,
+    TaskDependencyError,
+)
+from .provenance import ProvenanceRecord
+from .metadata import ArtifactMetadata
+from .base_artifact import BaseArtifact
+from .contracts import (
+    InputArtifact,
+    FrameArtifact,
+    MediaSequence,
+    Camera,
+    CameraTrajectory,
+    Observation,
+    DepthMap,
+    SegmentationMask,
+    ReconstructionHypothesis,
+    ConfidenceMap,
+    ValidationReport,
+)
+from .config import EngineConfig
+from .registry import Registry, ModelSpec, ModelAdapter, MODEL_REGISTRY, TASK_REGISTRY
+
+__all__ = [
+    "ArtifactType",
+    "ModalityType",
+    "ConfidenceLevel",
+    "TaskState",
+    "DeviceType",
+    "PrecisionType",
+    "ModelRuntimeState",
+    "ModelCapability",
+    "EntityType",
+    "SpatialRelation",
+    "VyomaaError",
+    "ConfigurationError",
+    "SchemaValidationError",
+    "ArtifactStoreError",
+    "SceneGraphError",
+    "GeometryError",
+    "HardwareError",
+    "RegistryError",
+    "PipelineExecutionError",
+    "TaskDependencyError",
+    "ProvenanceRecord",
+    "ArtifactMetadata",
+    "BaseArtifact",
+    "InputArtifact",
+    "FrameArtifact",
+    "MediaSequence",
+    "Camera",
+    "CameraTrajectory",
+    "Observation",
+    "DepthMap",
+    "SegmentationMask",
+    "ReconstructionHypothesis",
+    "ConfidenceMap",
+    "ValidationReport",
+    "EngineConfig",
+    "Registry",
+    "ModelSpec",
+    "ModelAdapter",
+    "MODEL_REGISTRY",
+    "TASK_REGISTRY",
+]

@@ -1,0 +1,23 @@
+profile_name: multiview_object
+hardware:
+  device: cuda
+  precision: fp16
+  vram_budget_gb: 60.0
+ingestion:
+  max_resolution: [2048, 2048]
+camera_geometry:
+  geometry_backend: mast3r
+  colmap_enabled: true
+fusion:
+  evidence_weight: 0.90
+  generative_prior_weight: 0.10
+workers_3d:
+  primary_worker: Hunyuan3D
+texture_material:
+  texture_resolution: 4096
+refinement:
+  target_face_count: 60000
+validation:
+  min_overall_confidence: 0.75
+storage:
+  workspace_root: workspace

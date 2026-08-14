@@ -1,0 +1,26 @@
+profile_name: world_reconstruction
+hardware:
+  device: cuda
+  precision: fp16
+  vram_budget_gb: 88.0
+ingestion:
+  max_video_frames: 1800
+  target_fps: 30.0
+perception:
+  depth_model: depth_anything_v2_vitl
+  segmentation_model: sam2_hiera_large
+  tracking_model: bytetrack
+camera_geometry:
+  geometry_backend: vggt
+  colmap_enabled: true
+fusion:
+  evidence_weight: 0.95
+  generative_prior_weight: 0.05
+texture_material:
+  texture_resolution: 4096
+refinement:
+  target_face_count: 100000
+validation:
+  min_overall_confidence: 0.8
+storage:
+  workspace_root: workspace
