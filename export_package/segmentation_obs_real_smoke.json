@@ -1,0 +1,92 @@
+{
+  "observation_id": "obs_real_smoke",
+  "masks": [
+    {
+      "mask_id": "obs_real_smoke_mask_0",
+      "object_id": "obj_0",
+      "mask_shape": [
+        512,
+        512
+      ],
+      "confidence": 0.9417916536331177,
+      "bbox": [
+        129,
+        130,
+        383,
+        383
+      ],
+      "metadata": {
+        "source_image": "/tmp/tmpbbuatjg8.jpg",
+        "area": 62388,
+        "resolution": [
+          512,
+          512
+        ]
+      }
+    },
+    {
+      "mask_id": "obs_real_smoke_mask_1",
+      "object_id": "obj_1",
+      "mask_shape": [
+        512,
+        512
+      ],
+      "confidence": 0.5632491111755371,
+      "bbox": [
+        0,
+        2,
+        511,
+        507
+      ],
+      "metadata": {
+        "source_image": "/tmp/tmpbbuatjg8.jpg",
+        "area": 177067,
+        "resolution": [
+          512,
+          512
+        ]
+      }
+    },
+    {
+      "mask_id": "obs_real_smoke_mask_2",
+      "object_id": "obj_2",
+      "mask_shape": [
+        512,
+        512
+      ],
+      "confidence": 0.9921676516532898,
+      "bbox": [
+        128,
+        128,
+        384,
+        384
+      ],
+      "metadata": {
+        "source_image": "/tmp/tmpbbuatjg8.jpg",
+        "area": 65827,
+        "resolution": [
+          512,
+          512
+        ]
+      }
+    }
+  ],
+  "tracked_ids": [
+    "obj_1",
+    "obj_0",
+    "obj_2"
+  ],
+  "provenance": {
+    "worker": "SAM2Worker",
+    "model": "sam2.1_hiera_large",
+    "checkpoint": "checkpoints/sam2.1_hiera_large.pt",
+    "config": "configs/sam2.1/sam2.1_hiera_l.yaml",
+    "device": "cuda:0",
+    "dtype": "torch.float32",
+    "inference_latency_ms": 104.41017150878906,
+    "vram_allocated_mb": 2032.8388671875,
+    "vram_peak_mb": 2612.845703125,
+    "timestamp": 1786730340.3169446,
+    "real_inference": true
+  }
+}

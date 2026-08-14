@@ -1,17 +1,35 @@
-"""Abstract base class for geometry and Structure-from-Motion (SfM) adapters."""
-
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, Any
+import torch
+from vyomaa.multiview.contracts import ViewSet, GeometryEvidence
 
-from ..core.contracts import Camera, Observation
-from ..core.exceptions import CameraGeometryError, ModelUnavailableError
-from ..core.registry import ModelAdapter, ModelSpec
+class BaseGeometryBackend(ABC):
+    def __init__(self, config: Dict[str, Any]):
+        self.config = config
+        self.device = torch.device(config.get("device", "cuda" if torch.cuda.is_available() else "cpu"))
+        self.dtype = getattr(torch, config.get("dtype", "float32"))
+        self.batch_limit = config.get("batch_limit", 4)
+        self.is_initialized = False
 
+    @abstractmethod
+    def initialize(self) -> bool:
+        pass
 
-class BaseGeometryAdapter(ModelAdapter, ABC):
-    """Abstract interface for multi-view geometry, point map prediction, and camera solvers."""
+    @abstractmethod
+    def is_available(self) -> bool:
+        pass
 
-    def __init__(self, spec: ModelSpec, config: Optional[Dict[str, Any]] = None) -> None:
-        super().__init__(spec, config)
+    @abstractmethod
+    def estimate_geometry(self, view_set: ViewSet) -> GeometryEvidence:
+        pass
+
+    @abstractmethod
+    def release(self) -> None:
+        pass
+
+    @abstractmethod
+    def capabilities(self) -> Dict[str, Any]:
+        pass
+
+# Alias for backward compatibility
+BaseGeometryAdapter = BaseGeometryBackend

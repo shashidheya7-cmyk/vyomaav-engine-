@@ -1,0 +1,28 @@
+{
+  "status": "REAL_MULTI_VIEW_FUSION_VERIFIED",
+  "models_fused": [
+    "Depth Anything V2 (Dense Depth Cross-Check)",
+    "SAM2 (Hiera Large Video & Object Segmentation)",
+    "VGGT (Visual Geometry Grounded Transformer)"
+  ],
+  "input_views": 5,
+  "input_resolution": [
+    512,
+    512
+  ],
+  "total_unprojected_points": 1310720,
+  "voxel_suppressed_points": 1272107,
+  "sor_outliers_removed": 1959,
+  "final_fused_points": 36654,
+  "static_points": 34296,
+  "dynamic_points": 2358,
+  "dynamic_clusters_tracked": [
+    "obj_2",
+    "obj_1"
+  ],
+  "coordinate_frame": "world_opencv",
+  "scale_status": "up_to_scale",
+  "fusion_runtime_ms": 2008.289098739624,
+  "peak_vram_mb": 2033.9609375,
+  "ply_artifact_path": "outputs/fused_world/fused_scene.ply"
+}

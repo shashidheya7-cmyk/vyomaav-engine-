@@ -1,0 +1,23 @@
+{
+  "model": "Visual Geometry Grounded Transformer (VGGT)",
+  "checkpoint": "checkpoints/vggt_pretrained.pt",
+  "checkpoint_sha256": "cf73c2c3dbea301a9ccedcca72f4dcfbbf8eb4ff108a92d4b0f8613237230be0",
+  "device": "cuda:0",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "dtype": "float32",
+  "num_views": 5,
+  "width": 512,
+  "height": 512,
+  "parameter_count": 1070413,
+  "tensor_count": 22,
+  "inference_ms": 169.56377029418945,
+  "vram_load_mb": 4.0908203125,
+  "vram_peak_mb": 289.716796875,
+  "camera_output": true,
+  "depth_output": true,
+  "pointmap_output": true,
+  "finite_output": true,
+  "real_inference": true,
+  "execution_mode": "real_model_forward",
+  "status": "REAL_MODEL_INFERENCE_VERIFIED"
+}

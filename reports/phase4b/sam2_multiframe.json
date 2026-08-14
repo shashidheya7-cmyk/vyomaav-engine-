@@ -1,0 +1,22 @@
+{
+  "model": "sam2.1_hiera_large",
+  "checkpoint": "checkpoints/sam2.1_hiera_large.pt",
+  "config": "configs/sam2.1/sam2.1_hiera_l.yaml",
+  "device": "cuda:0",
+  "input_video_frames": 5,
+  "frame_resolution": [
+    512,
+    512
+  ],
+  "seeded_object_id": 1,
+  "propagated_object_ids": [
+    1
+  ],
+  "propagation_frames": 5,
+  "mean_latency_ms": 90.67506790161133,
+  "total_latency_ms": 453.37533950805664,
+  "peak_vram_mb": 2612.845703125,
+  "finite_output": true,
+  "temporal_id_persistence": true,
+  "status": "REAL_MULTI_FRAME_VERIFIED"
+}

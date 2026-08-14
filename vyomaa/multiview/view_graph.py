@@ -1,95 +1,76 @@
-"""Data structures for multi-view graphs, pairwise matches, and quality scores."""
+import logging
+from typing import Dict, List, Any, Optional
+from vyomaa.multiview.contracts import ViewSet
 
-from __future__ import annotations
+logger = logging.getLogger("vyomaa.multiview.view_graph")
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
-import numpy as np
+class ViewGraphNode:
+    def __init__(self, observation_id: str, index: int, timestamp: float, metadata: Dict[str, Any]):
+        self.observation_id = observation_id
+        self.index = index
+        self.timestamp = timestamp
+        self.metadata = metadata
 
-from ..core.contracts import Camera, Observation
+class ViewGraphEdge:
+    def __init__(self, source_id: str, target_id: str, edge_type: str, weight: float, confidence: float, attributes: Dict[str, Any]):
+        self.source_id = source_id
+        self.target_id = target_id
+        self.edge_type = edge_type
+        self.weight = weight
+        self.confidence = confidence
+        self.attributes = attributes
 
-
-@dataclass
-class CorrespondenceMap:
-    """2D-2D pixel coordinate correspondences between two views."""
-    view_a_id: str
-    view_b_id: str
-    points_a: np.ndarray  # (M, 2)
-    points_b: np.ndarray  # (M, 2)
-    match_scores: np.ndarray  # (M,)
-    inlier_mask: np.ndarray   # (M,) boolean
-
-    @property
-    def num_matches(self) -> int:
-        return len(self.points_a)
-
-    @property
-    def num_inliers(self) -> int:
-        return int(np.sum(self.inlier_mask))
-
-    @property
-    def inlier_ratio(self) -> float:
-        return float(self.num_inliers) / max(self.num_matches, 1)
-
-
-@dataclass
-class ViewQualityScore:
-    """Individual view image quality metrics."""
-    view_id: str
-    sharpness: float
-    exposure_balance: float
-    feature_density: int
-    overall_quality: float
-
-
-@dataclass
-class ViewPair:
-    """Pairwise connection between two viewpoints in the multi-view graph."""
-    view_a_id: str
-    view_b_id: str
-    correspondence: CorrespondenceMap
-    relative_R: np.ndarray  # (3, 3)
-    relative_t: np.ndarray  # (3,)
-    epipolar_error_pixels: float
-    overlap_score: float
-    geometric_consistency_score: float
-    is_valid_edge: bool = True
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "view_a_id": self.view_a_id,
-            "view_b_id": self.view_b_id,
-            "num_matches": self.correspondence.num_matches,
-            "num_inliers": self.correspondence.num_inliers,
-            "inlier_ratio": round(self.correspondence.inlier_ratio, 3),
-            "epipolar_error_pixels": round(self.epipolar_error_pixels, 3),
-            "overlap_score": round(self.overlap_score, 3),
-            "geometric_consistency_score": round(self.geometric_consistency_score, 3),
-            "is_valid_edge": self.is_valid_edge,
-        }
-
-
-@dataclass
 class ViewGraph:
-    """Directed/undirected connectivity graph of multi-view observations."""
-    views: Dict[str, Observation] = field(default_factory=dict)
-    edges: Dict[Tuple[str, str], ViewPair] = field(default_factory=dict)
-    quality_scores: Dict[str, ViewQualityScore] = field(default_factory=dict)
+    def __init__(self):
+        self.nodes: Dict[str, ViewGraphNode] = {}
+        self.edges: List[ViewGraphEdge] = []
 
-    def add_view(self, observation: Observation, quality: Optional[ViewQualityScore] = None) -> None:
-        self.views[observation.artifact_id] = observation
-        if quality:
-            self.quality_scores[observation.artifact_id] = quality
+    def add_node(self, observation_id: str, index: int, timestamp: float, metadata: Optional[Dict[str, Any]] = None):
+        self.nodes[observation_id] = ViewGraphNode(observation_id, index, timestamp, metadata or {})
 
-    def add_edge(self, pair: ViewPair) -> None:
-        key = (pair.view_a_id, pair.view_b_id)
-        self.edges[key] = pair
+    def add_edge(self, source_id: str, target_id: str, edge_type: str, weight: float, confidence: float, attributes: Optional[Dict[str, Any]] = None):
+        self.edges.append(ViewGraphEdge(source_id, target_id, edge_type, weight, confidence, attributes or {}))
 
-    def get_neighbors(self, view_id: str) -> List[str]:
+    @classmethod
+    def from_view_set(cls, view_set: ViewSet, temporal_window: int = 2) -> "ViewGraph":
+        graph = cls()
+        ids = view_set.observation_ids
+        timestamps = view_set.timestamps if view_set.timestamps else [float(i) for i in range(len(ids))]
+
+        for i, obs_id in enumerate(ids):
+            graph.add_node(obs_id, i, timestamps[i], {"image_path": view_set.image_paths[i] if i < len(view_set.image_paths) else ""})
+
+        n = len(ids)
+        for i in range(n):
+            for j in range(i + 1, min(i + 1 + temporal_window, n)):
+                src, tgt = ids[i], ids[j]
+                time_delta = abs(timestamps[j] - timestamps[i])
+                weight = 1.0 / (1.0 + time_delta)
+                graph.add_edge(src, tgt, "temporal_adjacency", weight=weight, confidence=0.95, attributes={"time_delta": time_delta})
+
+        return graph
+
+    def get_local_neighbors(self, observation_id: str, k: int = 3) -> List[str]:
         neighbors = []
-        for (va, vb) in self.edges.keys():
-            if va == view_id:
-                neighbors.append(vb)
-            elif vb == view_id:
-                neighbors.append(va)
-        return list(set(neighbors))
+        for edge in self.edges:
+            if edge.source_id == observation_id and edge.edge_type == "temporal_adjacency":
+                neighbors.append(edge.target_id)
+        return neighbors[:k]
+
+class ViewPair:
+    def __init__(self, source_id: str, target_id: str, score: float = 0.0):
+        self.source_id = source_id
+        self.target_id = target_id
+        self.score = score
+
+class ViewQualityScore:
+    def __init__(self, observation_id: str, sharpness: float = 1.0, exposure: float = 1.0):
+        self.observation_id = observation_id
+        self.sharpness = sharpness
+        self.exposure = exposure
+
+class CorrespondenceMap:
+    def __init__(self, source_id: str, target_id: str, matches: Any = None):
+        self.source_id = source_id
+        self.target_id = target_id
+        self.matches = matches

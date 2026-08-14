@@ -1,0 +1,19 @@
+{
+  "observation_id": "obs_multiframe_smoke",
+  "propagated_frames": 5,
+  "tracked_objects": [
+    1
+  ],
+  "provenance": {
+    "worker": "SAM2Worker",
+    "model": "sam2.1_hiera_large",
+    "mode": "video_propagation",
+    "frames_dir": "/tmp/tmppx_9qk5d",
+    "seed_frame_idx": 0,
+    "propagated_frames_count": 5,
+    "propagation_latency_ms": 453.37533950805664,
+    "vram_peak_mb": 2612.845703125,
+    "timestamp": 1786730338.5837734,
+    "real_multi_frame_verified": true
+  }
+}

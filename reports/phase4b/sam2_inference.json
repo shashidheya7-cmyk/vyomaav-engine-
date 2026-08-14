@@ -1,0 +1,24 @@
+{
+  "model": "sam2.1_hiera_large",
+  "checkpoint": "checkpoints/sam2.1_hiera_large.pt",
+  "config": "configs/sam2.1/sam2.1_hiera_l.yaml",
+  "device": "cuda:0",
+  "gpu_name": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "torch_version": "2.11.0+cu130",
+  "torch_cuda": "13.0",
+  "input_width": 512,
+  "input_height": 512,
+  "mask_count": 3,
+  "mask_resolution": [
+    512,
+    512
+  ],
+  "inference_ms": 104.41017150878906,
+  "vram_before_mb": 9.125,
+  "vram_after_load_mb": 2015.8388671875,
+  "vram_peak_mb": 2612.845703125,
+  "finite_output": true,
+  "checkpoint_exists": true,
+  "real_inference": true,
+  "status": "REAL_MODEL_INFERENCE_VERIFIED"
+}

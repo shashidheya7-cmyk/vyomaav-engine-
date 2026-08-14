@@ -1,30 +1,35 @@
-"""Geometry Router choosing appropriate geometric solvers based on input modality and evidence count."""
+import logging
+from typing import Dict, Any, Optional
+from vyomaa.multiview.contracts import ViewSet, GeometryEvidence
+from vyomaa.camera_geometry.base import BaseGeometryBackend
 
-from __future__ import annotations
-
-from typing import Any, Dict, List, Optional, Tuple
-from ..core.contracts import Camera, InputArtifact, Observation
-from ..core.exceptions import CameraGeometryError
-from ..core.types import ModalityType
-
+logger = logging.getLogger("vyomaa.camera_geometry.geometry_router")
 
 class GeometryRouter:
-    """Determines the optimal geometric solver strategy matching input modality constraints."""
+    def __init__(self, backends: Dict[str, BaseGeometryBackend], policy_config: Optional[Dict[str, Any]] = None):
+        self.backends = backends
+        self.policy_config = policy_config or {
+            "primary": "VGGT",
+            "analytic_fallback": "analytic_fallback",
+            "confidence_threshold": 0.75
+        }
 
-    @staticmethod
-    def select_solver(input_artifact: InputArtifact) -> str:
-        """Route to appropriate solver strategy without fabricating world poses for single images."""
-        if input_artifact.modality == ModalityType.RGB_IMAGE:
-            # Single image -> strictly image-space perspective, no synthetic world trajectories
-            return "single_image_perspective"
-        elif input_artifact.modality == ModalityType.MULTIVIEW_IMAGE_SET:
-            # Multi-view set -> feature correspondence + epipolar relative poses + bundle adjustment
-            return "multiview_correspondence_sfm"
-        elif input_artifact.modality in {ModalityType.MONOCULAR_VIDEO, ModalityType.MULTI_CAMERA_VIDEO}:
-            # Video sequence -> keyframe tracking + trajectory smoothing + bundle adjustment
-            return "video_temporal_sfm"
-        elif input_artifact.modality in {ModalityType.RGBD_IMAGE, ModalityType.RGBD_VIDEO}:
-            # Direct sensor depth -> unprojection + metric scale
-            return "rgbd_metric_direct"
-        else:
-            return "single_image_perspective"
+    def route(self, view_set: ViewSet) -> GeometryEvidence:
+        primary_name = self.policy_config.get("primary", "VGGT")
+        vggt_backend = self.backends.get(primary_name) or self.backends.get("vggt")
+        
+        if vggt_backend and vggt_backend.is_available():
+            logger.info(f"Routing to primary geometry backend: {primary_name}")
+            evidence = vggt_backend.estimate_geometry(view_set)
+            evidence.provenance["routing_decision"] = "primary_VGGT"
+            return evidence
+
+        fallback_name = self.policy_config.get("analytic_fallback", "analytic_fallback")
+        fallback_backend = self.backends.get(fallback_name)
+        if fallback_backend and fallback_backend.is_available():
+            logger.warning("Primary VGGT backend unavailable. Executing fallback geometry.")
+            evidence = fallback_backend.estimate_geometry(view_set)
+            evidence.provenance["routing_decision"] = "fallback_analytic_geometry"
+            return evidence
+
+        raise RuntimeError("No available geometry backends could process the ViewSet.")

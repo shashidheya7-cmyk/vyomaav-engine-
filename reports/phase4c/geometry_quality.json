@@ -1,0 +1,61 @@
+{
+  "coordinate_consistency": "VERIFIED_OPENCV_WORLD",
+  "finite_points_ratio": 1.0,
+  "duplicate_suppression_ratio": 0.9705406188964844,
+  "sor_outlier_ratio": 0.05073420868619377,
+  "cross_check_summary": [
+    {
+      "view": "view_00",
+      "valid_overlap_ratio": 1.0,
+      "median_ratio": 0.9523757515324159,
+      "correlation": 0.0,
+      "disagreement_percentage": 0.0,
+      "status": "CROSS_CHECK_VALIDATED"
+    },
+    {
+      "view": "view_01",
+      "valid_overlap_ratio": 1.0,
+      "median_ratio": 0.9524054513515168,
+      "correlation": 0.0,
+      "disagreement_percentage": 0.0,
+      "status": "CROSS_CHECK_VALIDATED"
+    },
+    {
+      "view": "view_02",
+      "valid_overlap_ratio": 1.0,
+      "median_ratio": 0.9523630578083506,
+      "correlation": 0.0,
+      "disagreement_percentage": 0.0,
+      "status": "CROSS_CHECK_VALIDATED"
+    },
+    {
+      "view": "view_03",
+      "valid_overlap_ratio": 1.0,
+      "median_ratio": 0.9523972609332736,
+      "correlation": 0.0,
+      "disagreement_percentage": 0.0,
+      "status": "CROSS_CHECK_VALIDATED"
+    },
+    {
+      "view": "view_04",
+      "valid_overlap_ratio": 1.0,
+      "median_ratio": 0.9523737440131514,
+      "correlation": 0.0,
+      "disagreement_percentage": 0.0,
+      "status": "CROSS_CHECK_VALIDATED"
+    }
+  ],
+  "bounds": {
+    "min": [
+      -2.612580012346451,
+      -1.3301686069953305,
+      0.5637223355734022
+    ],
+    "max": [
+      -0.7140478929504752,
+      1.0696506939091075,
+      2.5057764796781994
+    ]
+  },
+  "normal_estimation": "LOCAL_COVARIANCE_EIGENVECTOR"
+}
