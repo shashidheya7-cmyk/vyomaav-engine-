@@ -51,3 +51,38 @@ class PipelineExecutionError(VyomaaError):
 class TaskDependencyError(PipelineExecutionError):
     """Raised when task graph dependencies are circular or unsatisfied."""
     pass
+
+
+class ModelUnavailableError(VyomaaError):
+    """Raised when a neural network model or runtime weight dependency is unavailable."""
+    pass
+
+
+class IngestionError(VyomaaError):
+    """Raised when media ingestion or decoding fails."""
+    pass
+
+
+class PreprocessingError(VyomaaError):
+    """Raised when image/video preprocessing fails."""
+    pass
+
+
+class VisionError(VyomaaError):
+    """Raised when neural perception (depth, segmentation, tracking) fails."""
+    pass
+
+
+class CameraGeometryError(VyomaaError):
+    """Raised when camera estimation, pose recovery, or SfM fails."""
+    pass
+
+
+class MultiViewError(VyomaaError):
+    """Raised when multi-view correspondence or view graph operations fail."""
+    pass
+
+
+class BundleAdjustmentError(CameraGeometryError):
+    """Raised when non-linear bundle adjustment optimization diverges or fails."""
+    pass
