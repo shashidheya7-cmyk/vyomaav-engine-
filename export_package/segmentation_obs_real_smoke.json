@@ -16,7 +16,7 @@
         383
       ],
       "metadata": {
-        "source_image": "/tmp/tmpbbuatjg8.jpg",
+        "source_image": "/tmp/tmpv0ee2kld.jpg",
         "area": 62388,
         "resolution": [
           512,
@@ -39,7 +39,7 @@
         507
       ],
       "metadata": {
-        "source_image": "/tmp/tmpbbuatjg8.jpg",
+        "source_image": "/tmp/tmpv0ee2kld.jpg",
         "area": 177067,
         "resolution": [
           512,
@@ -62,7 +62,7 @@
         384
       ],
       "metadata": {
-        "source_image": "/tmp/tmpbbuatjg8.jpg",
+        "source_image": "/tmp/tmpv0ee2kld.jpg",
         "area": 65827,
         "resolution": [
           512,
@@ -73,8 +73,8 @@
   ],
   "tracked_ids": [
     "obj_1",
-    "obj_0",
-    "obj_2"
+    "obj_2",
+    "obj_0"
   ],
   "provenance": {
     "worker": "SAM2Worker",
@@ -83,10 +83,10 @@
     "config": "configs/sam2.1/sam2.1_hiera_l.yaml",
     "device": "cuda:0",
     "dtype": "torch.float32",
-    "inference_latency_ms": 104.41017150878906,
-    "vram_allocated_mb": 2032.8388671875,
-    "vram_peak_mb": 2612.845703125,
-    "timestamp": 1786730340.3169446,
+    "inference_latency_ms": 227.51235961914062,
+    "vram_allocated_mb": 2031.3388671875,
+    "vram_peak_mb": 2458.3388671875,
+    "timestamp": 1786786016.467866,
     "real_inference": true
   }
 }

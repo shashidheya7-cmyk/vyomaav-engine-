@@ -13,8 +13,8 @@
     1
   ],
   "propagation_frames": 5,
-  "mean_latency_ms": 90.67506790161133,
-  "total_latency_ms": 453.37533950805664,
+  "mean_latency_ms": 82.8465461730957,
+  "total_latency_ms": 414.2327308654785,
   "peak_vram_mb": 2612.845703125,
   "finite_output": true,
   "temporal_id_persistence": true,

@@ -8,12 +8,12 @@
     "worker": "SAM2Worker",
     "model": "sam2.1_hiera_large",
     "mode": "video_propagation",
-    "frames_dir": "/tmp/tmppx_9qk5d",
+    "frames_dir": "/tmp/tmppq6fitkb",
     "seed_frame_idx": 0,
     "propagated_frames_count": 5,
-    "propagation_latency_ms": 453.37533950805664,
+    "propagation_latency_ms": 414.2327308654785,
     "vram_peak_mb": 2612.845703125,
-    "timestamp": 1786730338.5837734,
+    "timestamp": 1786786019.5815065,
     "real_multi_frame_verified": true
   }
 }
